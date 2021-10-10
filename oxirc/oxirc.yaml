@@ -1,0 +1,7 @@
+---
+oxircApiVersion: v1
+bootStages:
+  - system
+  - network
+  - interface
+dieOnFailure: false

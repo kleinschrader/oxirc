@@ -1,0 +1,1 @@
+pub const OXIRC_FILE: &str = "oxirc.yaml";
