@@ -1,0 +1,7 @@
+---
+name: "Agetty Service"
+unit_type: "simple"
+runas: "root"
+stage:
+  name: "system"
+  sub: "main"
