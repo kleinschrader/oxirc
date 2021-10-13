@@ -1,7 +1,7 @@
 ---
-oxircApiVersion: v1
-bootStages:
+oxirc_api_version: "v1"
+boot_stages:
   - system
   - network
   - interface
-dieOnFailure: false
+die_on_failure: false
