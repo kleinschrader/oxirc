@@ -8,20 +8,25 @@ pub struct Config {
 }
 
 #[derive(Deserialize)]
-pub struct UnitStage {
-    pub name: String,
-    pub sub: String,
-}
-
-#[derive(Deserialize)]
 pub struct Unit {
     pub name: String,
     pub unit_type: String,
     pub runas: String,
-    pub stage: UnitStage,
+    pub requires: Vec<String>,
+    pub command: String,
+}
+
+pub enum UnitStatuses {
+    Unknown,
+    Ready,
+    Running,
+    Finished,
+    Crashed,
+    ConfigError
 }
 
 pub struct UnitContainer {
     pub unit: Unit,
     pub last_modifed: std::time::SystemTime,
+    pub status: UnitStatuses,
 }

@@ -4,3 +4,4 @@ id: "agetty"
 unit_type: "simple"
 runas: "root"
 requires: []
+command: "/sbin/agetty -o '-p -- \\u' --noclear 1 $TERM"

@@ -1,7 +1,9 @@
 use std::io::Read;
 
 #[path = "../structs.rs"]
-mod structs;
+pub mod structs;
+
+pub use structs::{UnitContainer};
 
 pub fn load_unit_data(unit_file_path: &str) -> Result<structs::UnitContainer, String> {
     let mut unit_file = match std::fs::File::open(unit_file_path) {
@@ -36,14 +38,15 @@ pub fn load_unit_data(unit_file_path: &str) -> Result<structs::UnitContainer, St
     let unit_container : structs::UnitContainer = structs::UnitContainer {
         last_modifed: unit_metadata.modified().unwrap(),
         unit: unit,
+        status: structs::UnitStatuses::Unknown,
     };
 
     Ok(unit_container)
 }
 
-pub fn load_units(unit_directory: &str) -> Vec<structs::UnitContainer> {
+pub fn load_units(unit_directory: &str) -> Vec<Box<structs::UnitContainer>> {
     
-    let mut output_buffer: Vec<structs::UnitContainer> = std::vec::Vec::new();
+    let mut output_buffer: Vec<Box<structs::UnitContainer>> = std::vec::Vec::new();
     
     for entry in std::fs::read_dir(unit_directory).unwrap() {
         let unit_entry = entry.unwrap();
@@ -52,11 +55,19 @@ pub fn load_units(unit_directory: &str) -> Vec<structs::UnitContainer> {
         if unit_entry.file_type().unwrap().is_dir() {
             let mut sub_result = load_units(&unit_entry_path);
             
-            output_buffer.append(&mut sub_result)
+            for x in sub_result {
+                output_buffer.push(x);
+            }
         }
         else {
-            let unit = load_unit_data(&unit_entry_path);
-            output_buffer.extend(unit);
+            let unit = match load_unit_data(&unit_entry_path) {
+                Ok(r) => output_buffer.push(Box::new(r)),
+                Err(e) => {
+                    println!("Error loading Unit {}: {}", unit_entry_path, e);
+                }
+            };
+
+            
         }
 
     }

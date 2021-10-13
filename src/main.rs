@@ -8,6 +8,7 @@ mod structs;
 mod funcs;
 
 use funcs::units::load_units;
+use funcs::units::structs::UnitStatuses;
 
 
 #[derive(StructOpt)]
@@ -44,6 +45,28 @@ fn load_config_data(file_path: &str) -> Result<structs::Config, String> {
     Ok(config_data)
 }
 
+fn unit_runner(mut unit: Box<funcs::units::UnitContainer>) -> () {
+
+    let username: &str = &unit.as_ref().unit.runas;
+    
+    let user = nix::unistd::User::from_name(username).unwrap().unwrap();
+
+    loop {
+
+        match nix::unistd::seteuid(user.uid) {
+            Ok(_) => (),
+            Err(_) => {
+                unit.as_mut().status = UnitStatuses::ConfigError;
+                return ()
+            },
+        };
+
+        std::process::Command::new(&unit.as_ref().unit.command);
+
+        std::thread::sleep(std::time::Duration::from_millis(10000));
+    }
+}
+
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
@@ -60,18 +83,24 @@ async fn main() -> std::io::Result<()> {
     let config_data = load_config_data(&config_file_path).expect("Error parsing yaml");
 
     let units = load_units(&unit_file_path);
-
+    
     for unit in units {
-        println!("{}",unit.unit.name);
+        match unsafe{ nix::unistd::fork() } {
+            Ok(nix::unistd::ForkResult::Child) => {
+                unit_runner(unit);
+            }
+            Ok(_) => {
+
+            }
+            Err(_)  => {
+
+            }
+        }
     }
 
     loop
     {
 
-
-        for stage in &config_data.boot_stages {
-            println!("Working with stage: {}", stage);
-        }
 
 
         std::thread::sleep(std::time::Duration::from_millis(500));

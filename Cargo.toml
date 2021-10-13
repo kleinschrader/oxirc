@@ -11,4 +11,4 @@ structopt = "0.3.23"
 yaml-rust = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.8"
-fork = "0.1.18"
+nix = "0.23.0"
