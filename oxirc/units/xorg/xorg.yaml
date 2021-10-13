@@ -1,0 +1,7 @@
+---
+name: "Xorg Service"
+id: "xorg"
+unit_type: "simple"
+runas: "root"
+requires:
+  "agetty"
