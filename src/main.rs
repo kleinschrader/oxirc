@@ -62,6 +62,7 @@ fn unit_runner(mut unit: Box<funcs::units::UnitContainer>) -> () {
         };
 
         std::process::Command::new(&unit.as_ref().unit.command)
+            .args(&unit.as_ref().unit.args)
             .spawn().unwrap();
 
         std::thread::sleep(std::time::Duration::from_millis(10000));

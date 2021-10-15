@@ -14,6 +14,7 @@ pub struct Unit {
     pub runas: String,
     pub requires: Vec<String>,
     pub command: String,
+    pub args: Vec<String>,
 }
 
 pub enum UnitStatuses {

@@ -6,3 +6,5 @@ runas: "root"
 requires:
 - "agetty"
 command: ""
+args:
+- ""
